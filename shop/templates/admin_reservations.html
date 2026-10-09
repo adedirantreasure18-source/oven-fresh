@@ -1,0 +1,87 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservations - Oven Fresh Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-logo"><span>🥖</span> OVEN FRESH</div>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'dashboard' %}">📊 Dashboard</a></li>
+                <li><a href="{% url 'admin_products' %}">📦 All Products</a></li>
+                <li><a href="{% url 'admin_orders' %}">🛒 Orders</a></li>
+                <li><a href="{% url 'admin_reservations' %}" class="active">📅 Reservations</a></li>
+                {% if is_main_admin %}
+                <li><a href="{% url 'admin_users' %}">👥 Manage Users</a></li>
+                {% endif %}
+            </ul>
+            <div class="sidebar-footer">
+                <a href="{% url 'home' %}" class="sidebar-link" target="_blank">🌐 View Website</a>
+                <a href="{% url 'logout' %}" class="logout-btn" style="text-decoration:none;display:block;text-align:center;margin-top:12px;">🚪 Logout</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-bar">
+                <div>
+                    <h1>Reservations</h1>
+                    <p style="color:#64748b;margin-top:4px;">Manage table reservations.</p>
+                </div>
+            </div>
+
+            <div style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
+                <form method="get" style="display:flex;gap:8px;">
+                    <input type="text" name="q" value="{{ search }}" placeholder="Search by name or email..." class="form-input" style="width:300px;padding:8px 16px;">
+                    <button type="submit" class="add-btn" style="padding:8px 16px;">Search</button>
+                </form>
+            </div>
+
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Guest</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Guests</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for res in reservations %}
+                        <tr>
+                            <td><strong>{{ res.name }}</strong></td>
+                            <td>{{ res.email }}</td>
+                            <td>{{ res.phone }}</td>
+                            <td>{{ res.date|date:"M d, Y" }}</td>
+                            <td>{{ res.time|time:"g:i A" }}</td>
+                            <td>{{ res.guests }}</td>
+                            <td>
+                                <div style="display:flex;gap:8px;">
+                                    <a href="{% url 'admin_reservation_detail' res.pk %}" style="padding:6px 12px;background:#CCE5FF;color:#004085;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;">View</a>
+                                    <a href="{% url 'admin_reservation_delete' res.pk %}" style="padding:6px 12px;background:#F8D7DA;color:#721C24;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" style="text-align:center;padding:60px;color:#64748b;">
+                                No reservations found.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

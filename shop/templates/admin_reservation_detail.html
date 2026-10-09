@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation - Oven Fresh Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-logo"><span>🥖</span> OVEN FRESH</div>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'dashboard' %}">📊 Dashboard</a></li>
+                <li><a href="{% url 'admin_products' %}">📦 All Products</a></li>
+                <li><a href="{% url 'admin_orders' %}">🛒 Orders</a></li>
+                <li><a href="{% url 'admin_reservations' %}" class="active">📅 Reservations</a></li>
+                {% if is_main_admin %}
+                <li><a href="{% url 'admin_users' %}">👥 Manage Users</a></li>
+                {% endif %}
+            </ul>
+            <div class="sidebar-footer">
+                <a href="{% url 'home' %}" class="sidebar-link" target="_blank">🌐 View Website</a>
+                <a href="{% url 'logout' %}" class="logout-btn" style="text-decoration:none;display:block;text-align:center;margin-top:12px;">🚪 Logout</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-bar">
+                <div>
+                    <h1>Reservation Details</h1>
+                    <p style="color:#64748b;margin-top:4px;">{{ reservation.name }}'s table booking.</p>
+                </div>
+                <div style="display:flex;gap:12px;">
+                    <a href="{% url 'admin_reservation_delete' reservation.pk %}" class="action-btn admin-only" style="text-decoration:none;background:linear-gradient(135deg,#dc3545,#c82333);">Delete</a>
+                    <a href="{% url 'admin_reservations' %}" class="action-btn admin-only" style="text-decoration:none;">← Back</a>
+                </div>
+            </div>
+
+            <div class="checkout-form-section" style="max-width:600px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+                    <div>
+                        <div style="font-size:0.8rem;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Guest Name</div>
+                        <div style="font-size:1.1rem;font-weight:600;">{{ reservation.name }}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:0.8rem;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Email</div>
+                        <div style="font-size:1.1rem;font-weight:600;">{{ reservation.email }}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:0.8rem;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Phone</div>
+                        <div style="font-size:1.1rem;font-weight:600;">{{ reservation.phone }}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:0.8rem;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Party Size</div>
+                        <div style="font-size:1.1rem;font-weight:600;">{{ reservation.guests }} guests</div>
+                    </div>
+                    <div>
+                        <div style="font-size:0.8rem;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Date</div>
+                        <div style="font-size:1.1rem;font-weight:600;">{{ reservation.date|date:"l, F d, Y" }}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:0.8rem;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Time</div>
+                        <div style="font-size:1.1rem;font-weight:600;">{{ reservation.time|time:"g:i A" }}</div>
+                    </div>
+                </div>
+                {% if reservation.notes %}
+                <div style="margin-top:24px;padding-top:24px;border-top:1px solid #f1f5f9;">
+                    <div style="font-size:0.8rem;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Special Requests</div>
+                    <div style="font-weight:500;line-height:1.7;">{{ reservation.notes }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+</body>
+</html>

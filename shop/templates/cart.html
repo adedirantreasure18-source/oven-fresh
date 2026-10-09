@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block title %}Cart - Oven Fresh{% endblock %}
+
+{% block content %}
+<section class="cart-section">
+    <div class="container">
+        <div class="section-header">
+            <h1>Your Cart</h1>
+        </div>
+
+        {% if cart|length > 0 %}
+        <div class="cart-grid">
+            <div class="cart-items">
+                {% for item in cart %}
+                <div class="cart-item">
+                    <div class="cart-item-image">
+                        <div class="product-placeholder {% if item.product.category.product_type == 'bakery' %}bakery-placeholder{% else %}restaurant-placeholder{% endif %} small">
+                            {% if item.product.category.product_type == 'bakery' %}🥐{% else %}🍽️{% endif %}
+                        </div>
+                    </div>
+                    <div class="cart-item-info">
+                        <h3>{{ item.product.name }}</h3>
+                        <p class="cart-item-category">{{ item.product.category.name }}</p>
+                        <p class="cart-item-price">₦{{ item.price }}</p>
+                    </div>
+                    <div class="cart-item-quantity">
+                        <form method="post" action="{% url 'update_cart' item.product.id %}" class="qty-form">
+                            {% csrf_token %}
+                            <button type="submit" name="quantity" value="{{ item.quantity|add:'-1' }}" class="qty-btn">−</button>
+                            <span class="qty-display">{{ item.quantity }}</span>
+                            <button type="submit" name="quantity" value="{{ item.quantity|add:'1' }}" class="qty-btn">+</button>
+                        </form>
+                    </div>
+                    <div class="cart-item-total">
+                        ₦{{ item.total_price|floatformat:2 }}
+                    </div>
+                    <a href="{% url 'remove_from_cart' item.product.id %}" class="cart-item-remove">×</a>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="cart-summary">
+                <h3>Order Summary</h3>
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span>₦{{ cart_total|floatformat:2 }}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Delivery</span>
+                    <span>Free</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total</span>
+                    <span>₦{{ cart_total|floatformat:2 }}</span>
+                </div>
+                <a href="{% url 'checkout' %}" class="btn btn-dark btn-block">Proceed to Checkout</a>
+                <a href="{% url 'bakery' %}" class="btn btn-outline btn-block">Continue Shopping</a>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-cart">
+            <div class="empty-icon">🛒</div>
+            <h2>Your cart is empty</h2>
+            <p>Add some delicious items to get started!</p>
+            <div class="empty-buttons">
+                <a href="{% url 'bakery' %}" class="btn btn-bakery">Browse Bakery</a>
+                <a href="{% url 'restaurant' %}" class="btn btn-restaurant">Browse Restaurant</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

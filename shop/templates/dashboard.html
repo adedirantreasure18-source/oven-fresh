@@ -1,0 +1,180 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Oven Fresh</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-logo"><span>🥖</span> OVEN FRESH</div>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'dashboard' %}" class="active">📊 Dashboard</a></li>
+                <li><a href="{% url 'admin_products' %}">📦 All Products</a></li>
+                <li><a href="{% url 'admin_orders' %}">🛒 Orders</a></li>
+                <li><a href="{% url 'admin_reservations' %}">📅 Reservations</a></li>
+                {% if is_main_admin %}
+                <li><a href="{% url 'admin_users' %}">👥 Manage Users</a></li>
+                {% endif %}
+            </ul>
+            <div class="sidebar-footer">
+                <a href="{% url 'home' %}" class="sidebar-link" target="_blank">🌐 View Website</a>
+                <a href="{% url 'logout' %}" class="logout-btn" style="text-decoration:none;display:block;text-align:center;margin-top:12px;">🚪 Logout</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-bar">
+                <div>
+                    <h1>Welcome back, {{ request.user.username|title }}!</h1>
+                    <p style="color:#64748b;margin-top:4px;">Here's what's happening at Oven Fresh today.</p>
+                </div>
+                <div class="role-badge {% if is_main_admin %}admin{% else %}manager{% endif %}">
+                    {{ role }}
+                </div>
+            </div>
+
+            <!-- Analytics Grid -->
+            <div class="analytics-grid">
+                <div class="analytics-card revenue" style="animation-delay:0.1s;">
+                    <h3>Total Revenue</h3>
+                    <div class="value">₦{{ total_revenue|floatformat:2 }}</div>
+                </div>
+                <div class="analytics-card orders" style="animation-delay:0.2s;">
+                    <h3>Total Orders</h3>
+                    <div class="value">{{ total_orders }}</div>
+                </div>
+                <div class="analytics-card products" style="animation-delay:0.3s;">
+                    <h3>Active Products</h3>
+                    <div class="value">{{ total_products }}</div>
+                </div>
+                <div class="analytics-card reservations" style="animation-delay:0.4s;">
+                    <h3>Upcoming Reservations</h3>
+                    <div class="value">{{ pending_reservations }}</div>
+                </div>
+            </div>
+
+            <!-- Customer Analytics -->
+            <div class="analytics-grid" style="margin-top:-16px;">
+                <div class="analytics-card" style="animation-delay:0.5s;border-top:4px solid #4A90E2;">
+                    <h3>Total Customers</h3>
+                    <div class="value">{{ total_customers }}</div>
+                </div>
+                <div class="analytics-card" style="animation-delay:0.55s;border-top:4px solid #4CAF50;">
+                    <h3>New This Week</h3>
+                    <div class="value">{{ new_customers_week }}</div>
+                </div>
+                <div class="analytics-card" style="animation-delay:0.6s;border-top:4px solid #FF9800;">
+                    <h3>New This Month</h3>
+                    <div class="value">{{ new_customers_month }}</div>
+                </div>
+                <div class="analytics-card" style="animation-delay:0.65s;border-top:4px solid #E91E63;">
+                    <h3>Online Now</h3>
+                    <div class="value">{{ online_now_count }}</div>
+                </div>
+            </div>
+
+            <!-- Order Status Breakdown -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:40px;">
+                <div class="data-table-container" style="animation-delay:0.7s;">
+                    <h2 style="margin-bottom:20px;font-family:'Playfair Display',serif;">Order Status</h2>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                        <div style="padding:20px;background:#FFF3CD;border-radius:12px;text-align:center;">
+                            <div style="font-size:2rem;font-weight:700;color:#856404;">{{ pending_orders }}</div>
+                            <div style="font-size:0.85rem;color:#856404;font-weight:600;">Pending</div>
+                        </div>
+                        <div style="padding:20px;background:#CCE5FF;border-radius:12px;text-align:center;">
+                            <div style="font-size:2rem;font-weight:700;color:#004085;">{{ confirmed_orders }}</div>
+                            <div style="font-size:0.85rem;color:#004085;font-weight:600;">Confirmed</div>
+                        </div>
+                        <div style="padding:20px;background:#FFE5CC;border-radius:12px;text-align:center;">
+                            <div style="font-size:2rem;font-weight:700;color:#A0522D;">{{ preparing_orders }}</div>
+                            <div style="font-size:0.85rem;color:#A0522D;font-weight:600;">Preparing</div>
+                        </div>
+                        <div style="padding:20px;background:#D4EDDA;border-radius:12px;text-align:center;">
+                            <div style="font-size:2rem;font-weight:700;color:#155724;">{{ delivered_orders }}</div>
+                            <div style="font-size:0.85rem;color:#155724;font-weight:600;">Delivered</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="data-table-container" style="animation-delay:0.8s;">
+                    <h2 style="margin-bottom:20px;font-family:'Playfair Display',serif;">Customers Online</h2>
+                    <div style="max-height:260px;overflow-y:auto;">
+                        {% for customer in online_now %}
+                        <div style="display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid #f1f5f9;">
+                            <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#4CAF50,#2E7D32);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;flex-shrink:0;">
+                                {{ customer.username.0|upper }}
+                            </div>
+                            <div style="flex:1;min-width:0;">
+                                <div style="font-weight:600;font-size:0.9rem;">{{ customer.get_full_name|default:customer.username }}</div>
+                                <div style="font-size:0.75rem;color:#64748b;">{{ customer.email }}</div>
+                            </div>
+                            <div style="width:8px;height:8px;border-radius:50%;background:#4CAF50;flex-shrink:0;"></div>
+                        </div>
+                        {% empty %}
+                        <div style="text-align:center;padding:40px;color:#64748b;">
+                            No customers online right now.
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <h2 style="margin-bottom:16px;font-family:'Playfair Display',serif;">Quick Actions</h2>
+            <div class="quick-actions">
+                <a href="{% url 'admin_product_add' %}" class="action-btn bakery">
+                    <span>🥐</span> Add Bakery Item
+                </a>
+                <a href="{% url 'admin_product_add' %}" class="action-btn restaurant">
+                    <span>🍽️</span> Add Restaurant Dish
+                </a>
+                <a href="{% url 'admin_orders' %}" class="action-btn" style="background:linear-gradient(135deg,#4A90E2,#2563EB);box-shadow:0 4px 12px rgba(74,144,226,0.3);">
+                    <span>🛒</span> View Orders
+                </a>
+                {% if is_main_admin %}
+                <a href="{% url 'admin_user_add' %}" class="action-btn admin-only">
+                    <span>👤</span> Create Staff
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Recent Orders -->
+            <div class="data-table-container" style="animation-delay:0.9s;margin-top:40px;">
+                <h2 style="margin-bottom:20px;font-family:'Playfair Display',serif;">Recent Orders</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in recent_orders %}
+                        <tr>
+                            <td><strong>#{{ order.order_number }}</strong></td>
+                            <td>{{ order.name }}</td>
+                            <td>₦{{ order.total_amount|floatformat:2 }}</td>
+                            <td><span class="status-pill status-{{ order.status }}">{{ order.get_status_display }}</span></td>
+                            <td>{{ order.created_at|date:"M d, Y" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" style="text-align:center;padding:40px;color:#64748b;">No orders yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

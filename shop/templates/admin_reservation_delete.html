@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Reservation - Oven Fresh Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-logo"><span>🥖</span> OVEN FRESH</div>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'dashboard' %}">📊 Dashboard</a></li>
+                <li><a href="{% url 'admin_products' %}">📦 All Products</a></li>
+                <li><a href="{% url 'admin_orders' %}">🛒 Orders</a></li>
+                <li><a href="{% url 'admin_reservations' %}" class="active">📅 Reservations</a></li>
+                {% if is_main_admin %}
+                <li><a href="{% url 'admin_users' %}">👥 Manage Users</a></li>
+                {% endif %}
+            </ul>
+            <div class="sidebar-footer">
+                <a href="{% url 'home' %}" class="sidebar-link" target="_blank">🌐 View Website</a>
+                <a href="{% url 'logout' %}" class="logout-btn" style="text-decoration:none;display:block;text-align:center;margin-top:12px;">🚪 Logout</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-bar">
+                <div>
+                    <h1>Delete Reservation</h1>
+                    <p style="color:#64748b;margin-top:4px;">This action cannot be undone.</p>
+                </div>
+            </div>
+
+            <div class="checkout-form-section" style="max-width:600px;">
+                <div style="text-align:center;padding:40px 20px;">
+                    <div style="font-size:4rem;margin-bottom:16px;">⚠️</div>
+                    <h2 style="margin-bottom:12px;">Are you sure?</h2>
+                    <p style="color:#64748b;margin-bottom:8px;">Delete reservation for <strong>{{ reservation.name }}</strong>?</p>
+                    <p style="color:#64748b;margin-bottom:32px;">{{ reservation.date|date:"F d, Y" }} at {{ reservation.time|time:"g:i A" }} - {{ reservation.guests }} guests</p>
+                    <div style="display:flex;gap:12px;justify-content:center;">
+                        <form method="post">
+                            {% csrf_token %}
+                            <button type="submit" style="padding:12px 28px;background:#dc3545;color:white;border:none;border-radius:12px;font-weight:600;cursor:pointer;font-size:0.95rem;">Yes, Delete</button>
+                        </form>
+                        <a href="{% url 'admin_reservations' %}" style="padding:12px 28px;background:#f1f5f9;color:#334155;border-radius:12px;font-weight:600;text-decoration:none;">Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

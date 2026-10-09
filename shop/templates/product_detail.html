@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }} - Oven Fresh{% endblock %}
+
+{% block content %}
+<section class="product-detail">
+    <div class="container">
+        <div class="product-detail-grid">
+            <div class="product-detail-image">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius-xl);">
+                {% else %}
+                <div class="product-placeholder {% if product.category.product_type == 'bakery' %}bakery-placeholder{% else %}restaurant-placeholder{% endif %} large">
+                    {% if product.category.product_type == 'bakery' %}🥐{% else %}🍽️{% endif %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="product-detail-info">
+                <span class="product-category">{{ product.category.name }}</span>
+                <h1>{{ product.name }}</h1>
+                <div class="product-meta">
+                    <span class="rating">⭐ {{ product.rating }}</span>
+                    {% if product.calories %}<span class="calories">🔥 {{ product.calories }} cal</span>{% endif %}
+                </div>
+                <p class="product-description">{{ product.description }}</p>
+                <div class="product-price-large">₦{{ product.price }}</div>
+                <form method="post" action="{% url 'add_to_cart' product.id %}" class="add-to-cart-form">
+                    {% csrf_token %}
+                    <div class="quantity-selector">
+                        <button type="button" class="qty-btn" onclick="updateQty(-1)">−</button>
+                        <input type="number" name="quantity" id="quantity" value="1" min="1" max="20">
+                        <button type="button" class="qty-btn" onclick="updateQty(1)">+</button>
+                    </div>
+                    <button type="submit" class="btn {% if product.category.product_type == 'bakery' %}btn-bakery{% else %}btn-restaurant{% endif %}">
+                        Add to Cart
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        {% if related %}
+        <div class="related-products">
+            <h2>You May Also Like</h2>
+            <div class="products-grid">
+                {% for p in related %}
+                <div class="product-card {% if p.category.product_type == 'bakery' %}bakery-product{% else %}restaurant-product{% endif %}">
+                    <a href="{% url 'product_detail' p.slug %}" class="product-image">
+                        {% if p.image %}
+                        <img src="{{ p.image.url }}" alt="{{ p.name }}" style="width:100%;height:100%;object-fit:cover;">
+                        {% else %}
+                        <div class="product-placeholder {% if p.category.product_type == 'bakery' %}bakery-placeholder{% else %}restaurant-placeholder{% endif %}">
+                            {% if p.category.product_type == 'bakery' %}🥐{% else %}🍽️{% endif %}
+                        </div>
+                        {% endif %}
+                    </a>
+                    <div class="product-info">
+                        <h3><a href="{% url 'product_detail' p.slug %}">{{ p.name }}</a></h3>
+                        <div class="product-footer">
+                            <span class="product-price">₦{{ p.price }}</span>
+                            <form method="post" action="{% url 'add_to_cart' p.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="add-btn">+ Add</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<script>
+function updateQty(delta) {
+    const input = document.getElementById('quantity');
+    let val = parseInt(input.value) + delta;
+    if (val < 1) val = 1;
+    if (val > 20) val = 20;
+    input.value = val;
+}
+</script>
+{% endblock %}

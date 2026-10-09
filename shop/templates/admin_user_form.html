@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Staff User - Oven Fresh Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-logo"><span>🥖</span> OVEN FRESH</div>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'dashboard' %}">📊 Dashboard</a></li>
+                <li><a href="{% url 'admin_products' %}">📦 All Products</a></li>
+                <li><a href="{% url 'admin_orders' %}">🛒 Orders</a></li>
+                <li><a href="{% url 'admin_reservations' %}">📅 Reservations</a></li>
+                <li><a href="{% url 'admin_users' %}" class="active">👥 Manage Users</a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <a href="{% url 'home' %}" class="sidebar-link" target="_blank">🌐 View Website</a>
+                <a href="{% url 'logout' %}" class="logout-btn" style="text-decoration:none;display:block;text-align:center;margin-top:12px;">🚪 Logout</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-bar">
+                <div>
+                    <h1>Add Staff User</h1>
+                    <p style="color:#64748b;margin-top:4px;">Create a new admin or manager account.</p>
+                </div>
+                <a href="{% url 'admin_users' %}" class="action-btn admin-only" style="text-decoration:none;">← Back to Users</a>
+            </div>
+
+            <div class="checkout-form-section" style="max-width:700px;">
+                <form method="post">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <div class="form-group">
+                        <label>{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                        <div style="color:#dc3545;font-size:0.85rem;margin-top:4px;">{{ field.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    <div class="form-group">
+                        <label>Role</label>
+                        <select name="group" class="form-input">
+                            <option value="Manager">Manager</option>
+                            <option value="Main Admin">Main Admin</option>
+                        </select>
+                    </div>
+                    <div style="display:flex;gap:12px;margin-top:24px;">
+                        <button type="submit" class="action-btn bakery" style="border:none;cursor:pointer;font-size:0.95rem;">Create User</button>
+                        <a href="{% url 'admin_users' %}" class="action-btn admin-only" style="text-decoration:none;">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

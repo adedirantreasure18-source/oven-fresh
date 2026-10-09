@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Reservation Confirmed - Oven Fresh{% endblock %}
+
+{% block content %}
+<section class="success-section">
+    <div class="container">
+        <div class="success-card">
+            <div class="success-icon">🎉</div>
+            <h1>Reservation Confirmed!</h1>
+            <p>We look forward to welcoming you. See you soon!</p>
+            <a href="{% url 'home' %}" class="btn btn-dark">Back to Home</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

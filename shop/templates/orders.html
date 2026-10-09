@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}My Orders - Oven Fresh{% endblock %}
+
+{% block content %}
+<section class="orders-section">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-tag">Order History</span>
+            <h1>Your Orders</h1>
+        </div>
+
+        <form method="get" class="order-search">
+            <input type="email" name="email" value="{{ email }}" placeholder="Enter your email to view orders" class="form-input">
+            <button type="submit" class="btn btn-dark">Search</button>
+        </form>
+
+        {% if email %}
+            {% if orders %}
+            <div class="orders-list">
+                {% for order in orders %}
+                <div class="order-card">
+                    <div class="order-header">
+                        <div>
+                            <h3>Order #{{ order.order_number }}</h3>
+                            <p class="order-date">{{ order.created_at|date:"M d, Y H:i" }}</p>
+                        </div>
+                        <span class="order-status status-{{ order.status }}">{{ order.get_status_display }}</span>
+                    </div>
+                    <div class="order-items">
+                        {% for item in order.items.all %}
+                        <div class="order-item">
+                            <span>{{ item.product.name }} × {{ item.quantity }}</span>
+                            <span>₦{{ item.subtotal|floatformat:2 }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="order-footer">
+                        <span>Total</span>
+                        <strong>₦{{ order.total_amount|floatformat:2 }}</strong>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <p>No orders found for this email.</p>
+            </div>
+            {% endif %}
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

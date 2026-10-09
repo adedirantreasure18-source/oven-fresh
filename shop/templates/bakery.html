@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Bakery - Oven Fresh{% endblock %}
+
+{% block content %}
+<section class="page-hero bakery-hero">
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-content">
+        <span class="hero-tag">Artisan Baked Goods</span>
+        <h1>Our Bakery</h1>
+        <p>Handcrafted with love, baked fresh every morning</p>
+    </div>
+</section>
+
+<section class="menu-section bakery-menu">
+    <div class="container">
+        <!-- Category Filter -->
+        <div class="category-filter">
+            <a href="{% url 'bakery' %}" class="filter-btn {% if not current_category %}active{% endif %}">All</a>
+            {% for cat in categories %}
+            <a href="?category={{ cat.slug }}" class="filter-btn {% if current_category == cat.slug %}active{% endif %}">{{ cat.name }}</a>
+            {% endfor %}
+        </div>
+
+        <!-- Products Grid -->
+        <div class="products-grid">
+            {% for product in products %}
+            <div class="product-card bakery-product" data-aos="fade-up">
+                <a href="{% url 'product_detail' product.slug %}" class="product-image">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width:100%;height:100%;object-fit:cover;">
+                    {% else %}
+                    <div class="product-placeholder bakery-placeholder">🥐</div>
+                    {% endif %}
+                    <span class="product-rating">⭐ {{ product.rating }}</span>
+                </a>
+                <div class="product-info">
+                    <span class="product-category">{{ product.category.name }}</span>
+                    <h3><a href="{% url 'product_detail' product.slug %}">{{ product.name }}</a></h3>
+                    <p>{{ product.description|truncatechars:80 }}</p>
+                    <div class="product-footer">
+                        <span class="product-price">₦{{ product.price }}</span>
+                        <form method="post" action="{% url 'add_to_cart' product.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="add-btn">+ Add</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+                <p>No products found in this category.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

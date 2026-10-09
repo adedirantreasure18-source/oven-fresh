@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+{% block title %}Oven Fresh - Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+        <div class="hero-badge">
+            <span class="pulse-dot"></span>
+            Fresh from the oven daily
+        </div>
+        <h1 class="hero-title">
+            Where <span class="text-bakery">Bakery</span><br>
+            Meets <span class="text-restaurant">Restaurant</span>
+        </h1>
+        <p class="hero-subtitle">
+            Experience the perfect blend of artisan baked goods and gourmet dining.
+            Every dish crafted with passion, every bite a celebration.
+        </p>
+        <div class="hero-buttons">
+            <a href="{% url 'bakery' %}" class="btn btn-bakery">
+                <span>🥐</span> Explore Bakery
+            </a>
+            <a href="{% url 'restaurant' %}" class="btn btn-restaurant">
+                <span>🍽️</span> View Restaurant
+            </a>
+        </div>
+        <div class="hero-stats">
+            <div class="stat">
+                <div class="stat-icon">🕐</div>
+                <div><small>Open Daily</small><strong>7AM - 10PM</strong></div>
+            </div>
+            <div class="stat">
+                <div class="stat-icon">📍</div>
+                <div><small>Location</small><strong>123 Main St</strong></div>
+            </div>
+            <div class="stat">
+                <div class="stat-icon">⭐</div>
+                <div><small>Rating</small><strong>4.9/5.0</strong></div>
+            </div>
+        </div>
+    </div>
+    <div class="scroll-indicator">
+        <div class="scroll-mouse"><div class="scroll-wheel"></div></div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-tag">Our Promise</span>
+            <h2>Crafted With Love</h2>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon" style="--accent:#D4A574">🌾</div>
+                <h3>Fresh Daily</h3>
+                <p>Every item baked fresh each morning with premium ingredients sourced locally.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="--accent:#8B2252">👨‍🍳</div>
+                <h3>Chef Crafted</h3>
+                <p>Our expert chefs bring decades of culinary experience to every dish.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="--accent:#7C9473">🏆</div>
+                <h3>Award Winning</h3>
+                <p>Recognized for excellence in both baking and fine dining experiences.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Split Preview Section -->
+<section class="preview-section">
+    <div class="container">
+        <div class="preview-grid">
+            <a href="{% url 'bakery' %}" class="preview-card bakery-card">
+                <div class="preview-image">
+                    <div class="steam-effect"></div>
+                    <div class="bakery-pattern"></div>
+                </div>
+                <div class="preview-content">
+                    <span class="preview-tag">Artisan</span>
+                    <h3>Bakery</h3>
+                    <p>Fresh breads, pastries & cakes</p>
+                    <span class="preview-link">Explore Menu →</span>
+                </div>
+            </a>
+            <a href="{% url 'restaurant' %}" class="preview-card restaurant-card">
+                <div class="preview-image">
+                    <div class="candle-effect"></div>
+                    <div class="restaurant-pattern"></div>
+                </div>
+                <div class="preview-content">
+                    <span class="preview-tag">Gourmet</span>
+                    <h3>Restaurant</h3>
+                    <p>Fine dining & hearty meals</p>
+                    <span class="preview-link">View Menu →</span>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Bakery Products -->
+<section class="products-section bakery-section">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-tag">From Our Bakery</span>
+            <h2>Freshly Baked Favorites</h2>
+        </div>
+        <div class="products-grid">
+            {% for product in bakery_products %}
+            <div class="product-card bakery-product">
+                <a href="{{ product.get_absolute_url }}" class="product-image">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width:100%;height:100%;object-fit:cover;">
+                    {% else %}
+                    <div class="product-placeholder bakery-placeholder">🥐</div>
+                    {% endif %}
+                    <span class="product-rating">⭐ {{ product.rating }}</span>
+                </a>
+                <div class="product-info">
+                    <span class="product-category">{{ product.category.name }}</span>
+                    <h3><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
+                    <p>{{ product.description|truncatechars:60 }}</p>
+                    <div class="product-footer">
+                        <span class="product-price">₦{{ product.price }}</span>
+                        <form method="post" action="{% url 'add_to_cart' product.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="add-btn">+ Add</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="section-cta">
+            <a href="{% url 'bakery' %}" class="btn btn-bakery">View All Bakery Items →</a>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Restaurant Products -->
+<section class="products-section restaurant-section">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-tag">From Our Kitchen</span>
+            <h2>Chef's Specialties</h2>
+        </div>
+        <div class="products-grid">
+            {% for product in restaurant_products %}
+            <div class="product-card restaurant-product">
+                <a href="{{ product.get_absolute_url }}" class="product-image">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width:100%;height:100%;object-fit:cover;">
+                    {% else %}
+                    <div class="product-placeholder restaurant-placeholder">🍽️</div>
+                    {% endif %}
+                    <span class="product-rating">⭐ {{ product.rating }}</span>
+                </div>
+                <div class="product-info">
+                    <span class="product-category">{{ product.category.name }}</span>
+                    <h3>{{ product.name }}</h3>
+                    <p>{{ product.description|truncatechars:60 }}</p>
+                    <div class="product-footer">
+                        <span class="product-price">₦{{ product.price }}</span>
+                        <form method="post" action="{% url 'add_to_cart' product.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="add-btn">+ Add</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="section-cta">
+            <a href="{% url 'restaurant' %}" class="btn btn-restaurant">View Full Menu →</a>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials-section">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-tag">What People Say</span>
+            <h2>Loved by Our Customers</h2>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                <p class="testimonial-text">"The croissants here are absolutely divine! Flaky, buttery, and fresh every single morning. I've never had better outside of Paris."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">S</div>
+                    <div>
+                        <strong>Sarah M.</strong>
+                        <span>Regular Customer</span>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                <p class="testimonial-text">"Best restaurant experience in town. The grilled salmon was cooked to perfection and the service was impeccable. Highly recommend!"</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">J</div>
+                    <div>
+                        <strong>James K.</strong>
+                        <span>Food Enthusiast</span>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                <p class="testimonial-text">"We hosted our anniversary dinner here and it was magical. The ambiance, food, and staff made it an unforgettable evening."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">A</div>
+                    <div>
+                        <strong>Amina R.</strong>
+                        <span>Event Guest</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Reserve Your Table</h2>
+            <p>Join us for an unforgettable dining experience. Book your table today.</p>
+            <a href="{% url 'reservation' %}" class="btn btn-light">Make a Reservation</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

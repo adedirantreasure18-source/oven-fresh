@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders - Oven Fresh Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-logo"><span>🥖</span> OVEN FRESH</div>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'dashboard' %}">📊 Dashboard</a></li>
+                <li><a href="{% url 'admin_products' %}">📦 All Products</a></li>
+                <li><a href="{% url 'admin_orders' %}" class="active">🛒 Orders</a></li>
+                <li><a href="{% url 'admin_reservations' %}">📅 Reservations</a></li>
+                {% if is_main_admin %}
+                <li><a href="{% url 'admin_users' %}">👥 Manage Users</a></li>
+                {% endif %}
+            </ul>
+            <div class="sidebar-footer">
+                <a href="{% url 'home' %}" class="sidebar-link" target="_blank">🌐 View Website</a>
+                <a href="{% url 'logout' %}" class="logout-btn" style="text-decoration:none;display:block;text-align:center;margin-top:12px;">🚪 Logout</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-bar">
+                <div>
+                    <h1>Orders</h1>
+                    <p style="color:#64748b;margin-top:4px;">View and manage customer orders.</p>
+                </div>
+            </div>
+
+            <div style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
+                <a href="{% url 'admin_orders' %}" class="filter-btn" style="{% if not status_filter %}background:#2D2D2D;color:white;{% endif %}">All</a>
+                {% for value, label in status_choices %}
+                <a href="{% url 'admin_orders' %}?status={{ value }}" class="filter-btn" style="{% if status_filter == value %}background:{% if value == 'pending' %}#856404{% elif value == 'confirmed' %}#004085{% elif value == 'preparing' %}#A0522D{% elif value == 'ready' %}#155724{% elif value == 'delivered' %}#155724{% else %}#721C24{% endif %};color:white;{% endif %}">{{ label }}</a>
+                {% endfor %}
+                <form method="get" style="display:flex;gap:8px;margin-left:auto;">
+                    {% if status_filter %}<input type="hidden" name="status" value="{{ status_filter }}">{% endif %}
+                    <input type="text" name="q" value="{{ search }}" placeholder="Search orders..." class="form-input" style="width:250px;padding:8px 16px;">
+                    <button type="submit" class="add-btn" style="padding:8px 16px;">Search</button>
+                </form>
+            </div>
+
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Email</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td><strong>#{{ order.order_number }}</strong></td>
+                            <td>{{ order.name }}</td>
+                            <td>{{ order.email }}</td>
+                            <td><strong>₦{{ order.total_amount|floatformat:2 }}</strong></td>
+                            <td>
+                                <span class="status-pill status-{{ order.status }}">
+                                    {{ order.get_status_display }}
+                                </span>
+                            </td>
+                            <td>{{ order.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                <a href="{% url 'admin_order_detail' order.pk %}" style="padding:6px 12px;background:#CCE5FF;color:#004085;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;">View</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" style="text-align:center;padding:60px;color:#64748b;">
+                                No orders found.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

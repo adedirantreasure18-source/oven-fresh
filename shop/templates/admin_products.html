@@ -1,0 +1,106 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - Oven Fresh Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-logo"><span>🥖</span> OVEN FRESH</div>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'dashboard' %}">📊 Dashboard</a></li>
+                <li><a href="{% url 'admin_products' %}" class="active">📦 All Products</a></li>
+                <li><a href="{% url 'admin_orders' %}">🛒 Orders</a></li>
+                <li><a href="{% url 'admin_reservations' %}">📅 Reservations</a></li>
+                {% if is_main_admin %}
+                <li><a href="{% url 'admin_users' %}">👥 Manage Users</a></li>
+                {% endif %}
+            </ul>
+            <div class="sidebar-footer">
+                <a href="{% url 'home' %}" class="sidebar-link" target="_blank">🌐 View Website</a>
+                <a href="{% url 'logout' %}" class="logout-btn" style="text-decoration:none;display:block;text-align:center;margin-top:12px;">🚪 Logout</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-bar">
+                <div>
+                    <h1>Products</h1>
+                    <p style="color:#64748b;margin-top:4px;">Manage your bakery and restaurant menu items.</p>
+                </div>
+                <a href="{% url 'admin_product_add' %}" class="action-btn bakery" style="text-decoration:none;">+ Add Product</a>
+            </div>
+
+            <div style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
+                <a href="{% url 'admin_products' %}" class="filter-btn {% if not product_type %}active{% endif %}" style="{% if not product_type %}background:#2D2D2D;color:white;{% endif %}">All</a>
+                <a href="{% url 'admin_products' %}?type=bakery" class="filter-btn {% if product_type == 'bakery' %}active{% endif %}" style="{% if product_type == 'bakery' %}background:#D4A574;color:#2D2D2D;{% endif %}">Bakery</a>
+                <a href="{% url 'admin_products' %}?type=restaurant" class="filter-btn {% if product_type == 'restaurant' %}active{% endif %}" style="{% if product_type == 'restaurant' %}background:#8B2252;color:white;{% endif %}">Restaurant</a>
+                <form method="get" style="display:flex;gap:8px;margin-left:auto;">
+                    {% if product_type %}<input type="hidden" name="type" value="{{ product_type }}">{% endif %}
+                    <input type="text" name="q" value="{{ search }}" placeholder="Search products..." class="form-input" style="width:250px;padding:8px 16px;">
+                    <button type="submit" class="add-btn" style="padding:8px 16px;">Search</button>
+                </form>
+            </div>
+
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Rating</th>
+                            <th>Available</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                        <tr>
+                            <td>
+                                <div style="display:flex;align-items:center;gap:12px;">
+                                    <div style="width:48px;height:48px;border-radius:12px;background:{% if product.category.product_type == 'bakery' %}linear-gradient(135deg,#F5E6D3,#E8D4B8){% else %}linear-gradient(135deg,#F5E0E0,#E8C5C5){% endif %};display:flex;align-items:center;justify-content:center;font-size:1.5rem;">
+                                        {% if product.category.product_type == 'bakery' %}🥐{% else %}🍽️{% endif %}
+                                    </div>
+                                    <div>
+                                        <strong>{{ product.name }}</strong>
+                                        <div style="font-size:0.75rem;color:#64748b;">{{ product.slug }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span style="font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;color:{% if product.category.product_type == 'bakery' %}#B8864F{% else %}#8B2252{% endif %};">{{ product.category.name }}</span></td>
+                            <td><strong>₦{{ product.price }}</strong></td>
+                            <td>⭐ {{ product.rating }}</td>
+                            <td>
+                                {% if product.is_available %}
+                                <span style="padding:4px 12px;border-radius:999px;font-size:0.75rem;font-weight:600;background:#D4EDDA;color:#155724;">Active</span>
+                                {% else %}
+                                <span style="padding:4px 12px;border-radius:999px;font-size:0.75rem;font-weight:600;background:#F8D7DA;color:#721C24;">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div style="display:flex;gap:8px;">
+                                    <a href="{% url 'admin_product_edit' product.pk %}" style="padding:6px 12px;background:#CCE5FF;color:#004085;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;">Edit</a>
+                                    <a href="{% url 'admin_product_delete' product.pk %}" style="padding:6px 12px;background:#F8D7DA;color:#721C24;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" style="text-align:center;padding:60px;color:#64748b;">
+                                No products found. <a href="{% url 'admin_product_add' %}" style="color:#8B2252;">Add your first product</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

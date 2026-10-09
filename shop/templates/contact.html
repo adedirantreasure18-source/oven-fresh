@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Contact - Oven Fresh{% endblock %}
+
+{% block content %}
+<section class="page-hero contact-hero">
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-content">
+        <span class="hero-tag">Get in Touch</span>
+        <h1>Contact Us</h1>
+        <p>We'd love to hear from you</p>
+    </div>
+</section>
+
+<section class="contact-section">
+    <div class="container">
+        <div class="contact-grid">
+            <div class="contact-info">
+                <h2>Visit Us</h2>
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <div>
+                        <h3>Address</h3>
+                        <p>123 Main Street<br>City, State 12345</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📞</div>
+                    <div>
+                        <h3>Phone</h3>
+                        <p>(555) 123-4567</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">✉️</div>
+                    <div>
+                        <h3>Email</h3>
+                        <p>hello@ovenfresh.com</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">🕐</div>
+                    <div>
+                        <h3>Hours</h3>
+                        <p>Mon-Fri: 7AM - 10PM<br>Sat-Sun: 8AM - 11PM</p>
+                    </div>
+                </div>
+            </div>
+            <div class="contact-form-wrapper">
+                <h2>Send a Message</h2>
+                {% if messages %}
+                <div style="margin-bottom:20px;">
+                    {% for message in messages %}
+                    <div style="padding:12px 16px;border-radius:12px;margin-bottom:8px;font-size:0.9rem;font-weight:500;background:{% if message.tags == 'error' %}#FEE2E2;color:#DC2626{% elif message.tags == 'success' %}#D1FAE5;color:#065F46{% else %}#DBEAFE;color:#1E40AF{% endif %};">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <form method="post" class="contact-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label>Name</label>
+                        {{ form.name }}
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        {{ form.email }}
+                    </div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        {{ form.message }}
+                    </div>
+                    <button type="submit" class="btn btn-dark btn-block">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

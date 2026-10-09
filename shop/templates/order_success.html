@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Order Confirmed - Oven Fresh{% endblock %}
+
+{% block content %}
+<section class="success-section">
+    <div class="container">
+        <div class="success-card">
+            <div class="success-icon">✓</div>
+            <h1>Order Placed Successfully!</h1>
+            <p class="order-number">Order #{{ order.order_number }}</p>
+            <p>Thank you, {{ order.name }}! We'll prepare your order fresh.</p>
+            <div class="success-details">
+                <p><strong>Total:</strong> ₦{{ order.total_amount|floatformat:2 }}</p>
+                <p><strong>Payment:</strong> {{ order.get_payment_method_display }}</p>
+            </div>
+            <div class="success-actions">
+                <a href="{% url 'home' %}" class="btn btn-dark">Back to Home</a>
+                <a href="{% url 'orders' %}?email={{ order.email }}" class="btn btn-outline">View Orders</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

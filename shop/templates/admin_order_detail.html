@@ -1,0 +1,124 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order #{{ order.order_number }} - Oven Fresh Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-logo"><span>🥖</span> OVEN FRESH</div>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'dashboard' %}">📊 Dashboard</a></li>
+                <li><a href="{% url 'admin_products' %}">📦 All Products</a></li>
+                <li><a href="{% url 'admin_orders' %}" class="active">🛒 Orders</a></li>
+                <li><a href="{% url 'admin_reservations' %}">📅 Reservations</a></li>
+                {% if is_main_admin %}
+                <li><a href="{% url 'admin_users' %}">👥 Manage Users</a></li>
+                {% endif %}
+            </ul>
+            <div class="sidebar-footer">
+                <a href="{% url 'home' %}" class="sidebar-link" target="_blank">🌐 View Website</a>
+                <a href="{% url 'logout' %}" class="logout-btn" style="text-decoration:none;display:block;text-align:center;margin-top:12px;">🚪 Logout</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-bar">
+                <div>
+                    <h1>Order #{{ order.order_number }}</h1>
+                    <p style="color:#64748b;margin-top:4px;">Placed on {{ order.created_at|date:"F d, Y \a\t g:i A" }}</p>
+                </div>
+                <a href="{% url 'admin_orders' %}" class="action-btn admin-only" style="text-decoration:none;">← Back to Orders</a>
+            </div>
+
+            <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;">
+                <div>
+                    <div class="data-table-container">
+                        <h2 style="margin-bottom:16px;font-family:'Playfair Display',serif;">Order Items</h2>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Qty</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.items.all %}
+                                <tr>
+                                    <td><strong>{{ item.product.name }}</strong></td>
+                                    <td>₦{{ item.price }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td><strong>₦{{ item.subtotal }}</strong></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <div style="text-align:right;padding-top:16px;border-top:2px solid #1e293b;margin-top:16px;">
+                            <span style="font-size:1.3rem;font-weight:700;">Total: ₦{{ order.total_amount|floatformat:2 }}</span>
+                        </div>
+                    </div>
+
+                    <div class="data-table-container" style="margin-top:24px;">
+                        <h2 style="margin-bottom:16px;font-family:'Playfair Display',serif;">Customer Details</h2>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                            <div>
+                                <div style="font-size:0.8rem;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Name</div>
+                                <div style="font-weight:600;">{{ order.name }}</div>
+                            </div>
+                            <div>
+                                <div style="font-size:0.8rem;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Email</div>
+                                <div style="font-weight:600;">{{ order.email }}</div>
+                            </div>
+                            <div>
+                                <div style="font-size:0.8rem;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Phone</div>
+                                <div style="font-weight:600;">{{ order.phone }}</div>
+                            </div>
+                            <div>
+                                <div style="font-size:0.8rem;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Payment</div>
+                                <div style="font-weight:600;">{{ order.get_payment_method_display }}</div>
+                            </div>
+                        </div>
+                        <div style="margin-top:16px;">
+                            <div style="font-size:0.8rem;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Delivery Address</div>
+                            <div style="font-weight:600;">{{ order.address }}</div>
+                        </div>
+                        {% if order.notes %}
+                        <div style="margin-top:16px;">
+                            <div style="font-size:0.8rem;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Notes</div>
+                            <div style="font-weight:600;">{{ order.notes }}</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div>
+                    <div class="checkout-form-section">
+                        <h2 style="margin-bottom:16px;font-family:'Playfair Display',serif;">Update Status</h2>
+                        <div style="margin-bottom:20px;">
+                            <div style="font-size:0.8rem;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Current Status</div>
+                            <span class="status-pill status-{{ order.status }}" style="font-size:0.9rem;padding:6px 16px;">
+                                {{ order.get_status_display }}
+                            </span>
+                        </div>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label>New Status</label>
+                                {{ form.status }}
+                            </div>
+                            <button type="submit" class="action-btn bakery" style="width:100%;border:none;cursor:pointer;margin-top:8px;">Update Status</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

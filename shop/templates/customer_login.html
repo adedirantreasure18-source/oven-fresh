@@ -1,0 +1,90 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Oven Fresh</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .auth-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 120px 24px 80px; position: relative; z-index: 1; }
+        .auth-card { background: white; border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); padding: 48px; width: 100%; max-width: 440px; animation: fadeInUp 0.6s ease; }
+        .auth-header { text-align: center; margin-bottom: 36px; }
+        .auth-header .logo-icon { width: 64px; height: 64px; margin: 0 auto 16px; border-radius: 50%; background: linear-gradient(135deg, #D4A574, #8B2252); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.8rem; }
+        .auth-header h1 { font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 8px; }
+        .auth-header p { color: #64748b; }
+        .auth-form .form-group { margin-bottom: 20px; }
+        .auth-form label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #2D2D2D; }
+        .auth-form input { width: 100%; padding: 14px 16px; border: 2px solid #f1f5f9; border-radius: 12px; font-size: 0.95rem; font-family: inherit; transition: all 0.3s; background: #f8fafc; }
+        .auth-form input:focus { outline: none; border-color: #8B2252; background: white; box-shadow: 0 0 0 4px rgba(139,34,82,0.1); }
+        .auth-submit { width: 100%; padding: 14px; background: linear-gradient(135deg, #8B2252, #6B1A3F); color: white; border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; font-family: inherit; }
+        .auth-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(139,34,82,0.4); }
+        .auth-footer { text-align: center; margin-top: 24px; color: #64748b; font-size: 0.9rem; }
+        .auth-footer a { color: #8B2252; font-weight: 600; }
+        .auth-divider { display: flex; align-items: center; gap: 16px; margin: 24px 0; color: #94a3b8; font-size: 0.85rem; }
+        .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: #e2e8f0; }
+    </style>
+</head>
+<body class="page-home">
+    <canvas id="bgCanvas" class="bg-canvas"></canvas>
+    <nav class="navbar scrolled" id="navbar">
+        <div class="nav-container">
+            <a href="{% url 'home' %}" class="nav-logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <path d="M16 10a4 4 0 01-8 0"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>OVEN FRESH</h1>
+                    <span>Bakery & Restaurant</span>
+                </div>
+            </a>
+        </div>
+    </nav>
+
+    <div class="auth-page">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="logo-icon">🥖</div>
+                <h1>Welcome Back</h1>
+                <p>Sign in to your Oven Fresh account</p>
+            </div>
+            {% if messages %}
+            <div style="margin-bottom:20px;">
+                {% for message in messages %}
+                <div style="padding:12px 16px;border-radius:12px;margin-bottom:8px;font-size:0.9rem;font-weight:500;background:{% if message.tags == 'error' %}#FEE2E2;color:#DC2626{% elif message.tags == 'success' %}#D1FAE5;color:#065F46{% else %}#DBEAFE;color:#1E40AF{% endif %};">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <form method="post" class="auth-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="username" placeholder="Enter your username" required autofocus>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="auth-submit">Sign In</button>
+            </form>
+            <div class="auth-footer">
+                Don't have an account? <a href="{% url 'customer_register' %}">Create one</a>
+            </div>
+            <div class="auth-divider">or</div>
+            <div class="auth-footer">
+                <a href="{% url 'home' %}" style="color:#64748b;">Continue browsing</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

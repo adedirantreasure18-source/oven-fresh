@@ -1,0 +1,148 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Oven Fresh</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #2D2D2D 0%, #1a0f08 50%, #4A1A2F 100%);
+            position: relative;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+        }
+        .login-bg-animation {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(212, 165, 116, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(139, 34, 82, 0.2) 0%, transparent 40%);
+            animation: pulseBg 8s ease-in-out infinite alternate;
+        }
+        @keyframes pulseBg {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.1); opacity: 1; }
+        }
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 48px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 10;
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .login-header { text-align: center; margin-bottom: 32px; }
+        .login-logo {
+            width: 64px; height: 64px;
+            background: linear-gradient(135deg, #D4A574, #8B2252);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 28px;
+            color: white;
+            box-shadow: 0 8px 16px rgba(139, 34, 82, 0.3);
+        }
+        .login-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: #2D2D2D;
+            margin: 0;
+        }
+        .login-header p { color: #64748b; margin-top: 8px; font-size: 0.95rem; }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block; font-size: 0.85rem; font-weight: 600;
+            color: #334155; margin-bottom: 8px;
+        }
+        .form-input {
+            width: 100%; padding: 14px 16px;
+            border: 2px solid #e2e8f0; border-radius: 12px;
+            font-size: 1rem; font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease; background: #f8fafc;
+            box-sizing: border-box;
+        }
+        .form-input:focus {
+            outline: none; border-color: #8B2252; background: white;
+            box-shadow: 0 0 0 4px rgba(139, 34, 82, 0.1);
+        }
+        .login-btn {
+            width: 100%; padding: 16px;
+            background: linear-gradient(135deg, #8B2252, #6B1A3F);
+            color: white; border: none; border-radius: 12px;
+            font-size: 1rem; font-weight: 600; cursor: pointer;
+            transition: all 0.3s ease; margin-top: 8px;
+            box-shadow: 0 4px 12px rgba(139, 34, 82, 0.3);
+        }
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139, 34, 82, 0.4);
+        }
+        .error-message {
+            background: #fef2f2; border: 1px solid #fecaca;
+            color: #991b1b; padding: 12px; border-radius: 8px;
+            font-size: 0.9rem; margin-bottom: 20px; text-align: center;
+            animation: shake 0.4s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .back-link {
+            display: block; text-align: center; margin-top: 24px;
+            color: #64748b; text-decoration: none; font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+        .back-link:hover { color: #8B2252; }
+    </style>
+    <script src="{% static 'js/main.js' %}"></script>
+</head>
+<body class="login-page">
+    <div class="login-bg-animation"></div>
+    
+    <div class="login-card">
+        <div class="login-header">
+            <div class="login-logo">🥖</div>
+            <h1>Welcome Back</h1>
+            <p>Sign in to your Oven Fresh dashboard</p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="error-message">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" class="form-input" required autofocus placeholder="Enter your username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-input" required placeholder="Enter your password">
+            </div>
+            <button type="submit" class="login-btn">Sign In to Dashboard</button>
+        </form>
+
+        <a href="{% url 'home' %}" class="back-link">← Back to Oven Fresh Website</a>
+    </div>
+</body>
+</html>

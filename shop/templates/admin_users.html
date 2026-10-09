@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Users - Oven Fresh Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-logo"><span>🥖</span> OVEN FRESH</div>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'dashboard' %}">📊 Dashboard</a></li>
+                <li><a href="{% url 'admin_products' %}">📦 All Products</a></li>
+                <li><a href="{% url 'admin_orders' %}">🛒 Orders</a></li>
+                <li><a href="{% url 'admin_reservations' %}">📅 Reservations</a></li>
+                <li><a href="{% url 'admin_users' %}" class="active">👥 Manage Users</a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <a href="{% url 'home' %}" class="sidebar-link" target="_blank">🌐 View Website</a>
+                <a href="{% url 'logout' %}" class="logout-btn" style="text-decoration:none;display:block;text-align:center;margin-top:12px;">🚪 Logout</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-bar">
+                <div>
+                    <h1>Staff Users</h1>
+                    <p style="color:#64748b;margin-top:4px;">Manage admin and manager accounts.</p>
+                </div>
+                <a href="{% url 'admin_user_add' %}" class="action-btn bakery" style="text-decoration:none;">+ Add User</a>
+            </div>
+
+            <div style="display:flex;gap:12px;margin-bottom:24px;">
+                <form method="get" style="display:flex;gap:8px;">
+                    <input type="text" name="q" value="{{ search }}" placeholder="Search users..." class="form-input" style="width:300px;padding:8px 16px;">
+                    <button type="submit" class="add-btn" style="padding:8px 16px;">Search</button>
+                </form>
+            </div>
+
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for u in users %}
+                        <tr>
+                            <td><strong>{{ u.username }}</strong></td>
+                            <td>{{ u.first_name }} {{ u.last_name }}</td>
+                            <td>{{ u.email }}</td>
+                            <td>
+                                {% if u.is_superuser %}
+                                <span style="padding:4px 12px;border-radius:999px;font-size:0.75rem;font-weight:600;background:linear-gradient(135deg,#8B2252,#6B1A3F);color:white;">Main Admin</span>
+                                {% elif u.groups.all %}
+                                {% for g in u.groups.all %}
+                                <span style="padding:4px 12px;border-radius:999px;font-size:0.75rem;font-weight:600;background:linear-gradient(135deg,#D4A574,#B8864F);color:#2D2D2D;">{{ g.name }}</span>
+                                {% endfor %}
+                                {% else %}
+                                <span style="padding:4px 12px;border-radius:999px;font-size:0.75rem;font-weight:600;background:#f1f5f9;color:#64748b;">No Role</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if u.is_active %}
+                                <span style="padding:4px 12px;border-radius:999px;font-size:0.75rem;font-weight:600;background:#D4EDDA;color:#155724;">Active</span>
+                                {% else %}
+                                <span style="padding:4px 12px;border-radius:999px;font-size:0.75rem;font-weight:600;background:#F8D7DA;color:#721C24;">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div style="display:flex;gap:8px;">
+                                    <a href="{% url 'admin_user_edit' u.pk %}" style="padding:6px 12px;background:#CCE5FF;color:#004085;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;">Edit</a>
+                                    {% if u != request.user %}
+                                    <a href="{% url 'admin_user_delete' u.pk %}" style="padding:6px 12px;background:#F8D7DA;color:#721C24;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none;">Delete</a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
